@@ -13,11 +13,16 @@ def configure_vm(config, name, box, addr)
   end
 end
 
+$prov = <<-SCRIPT
+  apt-get update ; apt-get install ansible -y
+  sudo su - ; echo "ansible" > /etc/hostname
+SCRIPT
+
 Vagrant.configure("2") do |config|
   config.vm.define "ansible" do |ansible|
     ansible.vm.box = "ubuntu/focal64"
     ansible.vm.network "private_network", ip: "10.10.10.10"
-    ansible.vm.provision "shell", inline: "apt-get update ; apt-get install ansible -y"
+    ansible.vm.provision "shell", inline: $prov
   end
 
   configure_vm(config, "ubuntu", "ubuntu/bionic64", "10.10.10.11")
