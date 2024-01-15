@@ -1,1 +1,2 @@
-alpine/.vagrant
+.vagrant/
+alpineServer/.vagrant/
