@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Apenas uma maquina basica com centos
+
+Vagrant.configure("2") do |config|
+  config.vm.define "centos" do |ctos|
+    ctos.vm.box = "centos/7"
+    config.vm.network "private_network", ip: "192.168.56.10"  
+    # config.vm.network "public_network"
+
+    ctos.vm.provision "shell", inline: <<-SHELL
+      sudo yum update -y
+    SHELL
+  end
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 1
+  end
+end
+
