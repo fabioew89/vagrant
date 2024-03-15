@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+<<<<<<< HEAD
   config.vm.define "ubuntu" do |ubuntu|
     ubuntu.vm.box = "ubuntu/focal64"
     ubuntu.vm.hostname = "syslog"
@@ -17,5 +18,20 @@ Vagrant.configure("2") do |config|
     v.name = "syslog"
     v.memory = 512
     v.cpus = 1
+=======
+  config.vm.define "debian" do |deb|
+    deb.vm.box = "generic/debian12"
+    deb.vm.hostname = "syslog"
+    deb.vm.provision "shell", inline: <<-SHELL
+      sudo apt update -y
+      sudo apt upgrade -y
+    SHELL
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = 'syslog'
+      v.memory = 512
+      v.cpus = 1
+    end
+>>>>>>> 8f53ed9 (new file:   syslog/Vagrantfile)
   end
 end
