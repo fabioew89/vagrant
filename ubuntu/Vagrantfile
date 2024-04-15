@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "ubuntu" do |ubuntu|
+    ubuntu.vm.hostname = "ubuntu"
+    ubuntu.vm.box = "ubuntu/focal64"
+
+    ubuntu.vm.provision "shell", inline: <<-SHELL
+      apt update ; apt upgrade -y
+    SHELL
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = "ubuntu"
+      v.memory = 512
+      v.cpus = 1
+    end
+  end
+end
