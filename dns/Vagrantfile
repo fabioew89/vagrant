@@ -2,19 +2,34 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.define "debian" do |debian|
-    debian.vm.hostname = "nsd"
-    debian.vm.box = "generic/debian12"
+config.vm.network "public_network", bridge: "enp3s0"
 
-    debian.vm.provision "shell", inline: <<-SHELL
-      apt update
-      apt install nsd
-    SHELL
+  # Recursive
+  for i in 1..2 do
+    config.vm.define "dns-recursive-#{i}" do |rec|
+      rec.vm.box = "ubuntu/focal64"
 
-    config.vm.provider "virtualbox" do |v|
-      v.name = "nsd"
-      v.memory = 512
-      v.cpus = 1
+      rec.vm.provision "shell", inline: <<-SHELL
+        sudo apt update
+        sudo apt install unbound -y
+      SHELL
     end
+  end
+
+  # Autoritative
+  for i in 1..2 do
+    config.vm.define "dns-autoritative-#{i}" do |aut|
+      aut.vm.box = "ubuntu/focal64"
+    
+      aut.vm.provision "shell", inline: <<-SHELL
+        sudo apt update
+        sudo apt install nsd -y
+      SHELL
+    end
+  end
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 1
   end
 end
