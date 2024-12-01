@@ -5,12 +5,11 @@ Vagrant.configure("2") do |config|
   config.vm.define "nginx" do |nginx|
     nginx.vm.hostname = "nginx"
     nginx.vm.box = "ubuntu/focal64"
-    nginx.vm.network "public_network"
-      use_dhcp_assigned_default_route: true
-
+    nginx.vm.network "public_network", 
+      type: "dhcp", use_dhcp_assigned_default_route: true
 
     nginx.vm.provision "shell", inline: <<-SHELL
-      apt update ; apt upgrade -y
+      apt update && apt upgrade -y
       apt install git vim nginx cockpit -y
     SHELL
 
