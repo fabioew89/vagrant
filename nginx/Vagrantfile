@@ -4,13 +4,14 @@
 Vagrant.configure("2") do |config|
   config.vm.define "nginx" do |nginx|
     nginx.vm.hostname = "nginx"
-    nginx.vm.box = "ubuntu/focal64"
+    nginx.vm.box = "ubuntu/jammy64"
     nginx.vm.network "public_network", bridge: "enp3s0"
 
 
     nginx.vm.provision "shell", inline: <<-SHELL
       apt update && apt upgrade -y
-      apt install git vim nginx cockpit -y
+      apt install git vim make nginx cockpit python3-full -y > /dev/null
+      git clone https://github.com/fabioew89/auto.clickip.local
     SHELL
 
     config.vm.provider "virtualbox" do |v|
