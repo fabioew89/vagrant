@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "nginx" do |nginx|
+    nginx.vm.hostname = "nginx"
+    nginx.vm.box = "ubuntu/focal64"
+    nginx.vm.network "public_network"
+
+
+    nginx.vm.provision "shell", inline: <<-SHELL
+      apt update ; apt upgrade -y
+      apt install git vim nginx cockpit -y
+    SHELL
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = "nginx"
+      v.memory = 512
+      v.cpus = 1
+    end
+  end
+end
