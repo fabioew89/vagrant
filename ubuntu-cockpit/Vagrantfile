@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "cockpit" do |cockpit|
+    cockpit.vm.hostname = "cockpit"
+    cockpit.vm.box = "ubuntu/jammy64"
+    cockpit.vm.network "public_network", bridge: "enp3s0"
+
+    cockpit.vm.provision "shell", inline: <<-SHELL
+      apt update ; apt upgrade -y
+    SHELL
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = "cockpit"
+      v.memory = 1024
+      v.cpus = 1
+    end
+  end
+end
