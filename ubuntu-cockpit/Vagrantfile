@@ -8,7 +8,8 @@ Vagrant.configure("2") do |config|
     cockpit.vm.network "public_network", bridge: "enp3s0"
 
     cockpit.vm.provision "shell", inline: <<-SHELL
-      apt update ; apt upgrade -y
+      apt update && apt upgrade -y
+      apt install -y cockpit make nginx certbot python3-certbot-nginx
     SHELL
 
     config.vm.provider "virtualbox" do |v|
