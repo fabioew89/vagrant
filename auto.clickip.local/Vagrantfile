@@ -1,0 +1,43 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "auto" do |auto|
+    auto.vm.hostname = "auto.clickip.local"
+    auto.vm.box = "ubuntu/focal64"
+    auto.vm.network "public_network"
+
+
+    auto.vm.provision "shell", inline: <<-SHELL
+      # Evita prompts interativos
+      export DEBIAN_FRONTEND=noninteractive
+
+      # Atualiza e limpa pacotes
+      apt update && apt full-upgrade -y && apt autoremove -y && apt autoclean -y
+
+      # Instala pacotes essenciais
+      apt install -y git vim make python3-full net-tools
+
+      # Clona seu repositório (verifica se já existe antes de clonar)
+      if [ ! -d "/home/vagrant/auto.clickip.local" ]; then
+          git clone https://github.com/fabioew89/auto.clickip.local /home/vagrant/auto.clickip.local
+      fi
+
+      # Baixa e instala Webmin corretamente
+      curl -o webmin-setup-repo.sh https://raw.githubusercontent.com/webmin/webmin/master/webmin-setup-repo.sh
+      chmod +x webmin-setup-repo.sh
+      ./webmin-setup-repo.sh -f
+      apt install -y webmin usermin --install-recommends
+
+      # Se quiser atualizar a distro sem perguntas, descomente:
+      # do-release-upgrade -f DistUpgradeViewNonInteractive -q
+    SHELL
+
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = "auto"
+      v.memory = 2024
+      v.cpus = 2
+    end
+  end
+end

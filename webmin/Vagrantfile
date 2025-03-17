@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "webmin" do |webmin|
+    webmin.vm.hostname = "webmin"
+    webmin.vm.box = "ubuntu/focal64"
+    webmin.vm.network "public_network"
+
+
+    webmin.vm.provision "shell", inline: <<-SHELL
+      apt update && apt upgrade -y && apt webminclean && apt webminremove -y
+      curl -o webmin-setup-repo.sh https://raw.githubusercontent.com/webmin/webmin/master/webmin-setup-repo.sh | sh webmin-setup-repo.sh
+      apt-get install webmin --install-recommends
+    SHELL
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = "webmin"
+      v.memory = 2024
+      v.cpus = 2
+    end
+  end
+end
