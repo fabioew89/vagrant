@@ -9,13 +9,28 @@ Vagrant.configure("2") do |config|
 
 
     webmin.vm.provision "shell", inline: <<-SHELL
-      apt update && apt upgrade -y && apt webminclean && apt webminremove -y
-      curl -o webmin-setup-repo.sh https://raw.githubusercontent.com/webmin/webmin/master/webmin-setup-repo.sh | sh webmin-setup-repo.sh
-      apt-get install webmin --install-recommends
+      # Evita prompts interativos
+      export DEBIAN_FRONTEND=noninteractive
+
+      # Atualiza e limpa pacotes
+      apt update && apt full-upgrade -y && apt autoremove -y && apt autoclean -y
+
+      # Instala pacotes essenciais
+      apt install -y git vim make python3-full net-tools
+
+      # Baixa e instala Webmin corretamente
+      curl -o webmin-setup-repo.sh https://raw.githubusercontent.com/webmin/webmin/master/webmin-setup-repo.sh
+      chmod +x webmin-setup-repo.sh
+      ./webmin-setup-repo.sh -f
+      apt install -y webmin usermin --install-recommends
+
+      # Se quiser atualizar a distro sem perguntas, descomente:
+      # do-release-upgrade -f DistUpgradeViewNonInteractive -q
     SHELL
 
+
     config.vm.provider "virtualbox" do |v|
-      v.name = "webmin"
+      v.name = "auto"
       v.memory = 2024
       v.cpus = 2
     end
