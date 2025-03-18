@@ -2,6 +2,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# cockpanel = cockpit + 1panel
+
 Vagrant.configure("2") do |config|
   config.vm.define "ubuntu" do |ubuntu|
     ubuntu.vm.hostname = "ubuntu"
@@ -20,11 +22,10 @@ Vagrant.configure("2") do |config|
       apt install -y git vim make python3-full net-tools cockpit
 
       # Baixa e instala Webmin corretamente
-      curl -o webmin-setup-repo.sh https://raw.githubusercontent.com/webmin/webmin/master/webmin-setup-repo.sh
-      chmod +x webmin-setup-repo.sh
-      ./webmin-setup-repo.sh -f
-      apt install -y webmin usermin --install-recommends
-
+      curl -sSL https://resource.1panel.pro/quick_start.sh -o quick_start.sh
+      chmod +x quick_start.sh
+      ./quick_start.sh -f
+      
       # Se quiser atualizar a distro sem perguntas, descomente:
       # do-release-upgrade -f DistUpgradeViewNonInteractive -q
     SHELL
