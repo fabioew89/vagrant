@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+config.vm.box = "ubuntu/focal64"
+
+config.vm.provision "shell", inline: <<-SHELL
+  apt update > /dev/null 2>&1
+  apt install ansible -y > /dev/null 2>&1
+SHELL
+
+config.vm.provider "virtualbox" do |v|
+  v.memory = 2048
+  v.cpus = 2
+end
+
+  # ansible
+  config.vm.define "ansible" do |ansible|
+    ansible.vm.hostname = "ansible"
+    ansible.vm.provider "virtualbox" do |v|
+      v.name = "Ansible-VM"
+    end
+  end
+
+  # client
+  (1..3).each do |i|
+    config.vm.define "node-#{i}" do |node|
+      node.vm.hostname = "node-#{i}"
+      node.vm.provider "virtualbox" do |v|
+        v.name = "node-#{i}"
+      end
+    end
+  end
+end
