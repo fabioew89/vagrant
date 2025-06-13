@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt update && apt upgrade -y
+  SHELL
+  
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+  
+  # LIBRENMS
+  config.vm.define "librenms" do |lib|
+    lib.vm.network "public_network", ip: "172.27.250.170", bridge: [
+      'Intel(R) Ethernet Connection (17) I219-LM',
+      'Hyper-V Virtual Ethernet Adapter',
+    ]
+    lib.vm.hostname = "librenms"
+    lib.vm.provision "shell", inline: <<-SHELL
+      apt install snmp -y
+      curl -fsSL https://get.docker.com -o install-docker.sh && bash install-docker.sh
+      git clone https://github.com/librenms/docker.git librenms
+      usermod -aG docker vagrant
+    SHELL
+  end
+    
+  # NODES
+  (5..6).each do |i|
+    config.vm.define "node#{i}" do |node|
+    node.vm.network "public_network", ip: "172.27.250.17#{i}", bridge: [
+      'Intel(R) Ethernet Connection (17) I219-LM',
+      'Hyper-V Virtual Ethernet Adapter',
+    ]
+    node.vm.hostname = "node#{i}"
+    node.vm.provision "shell", inline: <<-SHELL
+      apt install snmpd iperf3 -y
+    SHELL
+    end
+  end
+end
