@@ -1,0 +1,27 @@
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "ubuntu" do |ubuntu|
+    ubuntu.vm.box = "ubuntu/jammy64"
+    ubuntu.vm.network "public_network", bridge: [
+      'Intel(R) Ethernet Connection (17) I219-LM',
+      'Hyper-V Virtual Ethernet Adapter',
+    ]
+
+    ubuntu.vm.provision "shell", inline: <<-SHELL
+      # Atualiza e limpa pacotes
+      apt update && apt full-upgrade -y && apt autoremove -y && apt autoclean -y
+
+      # Instala pacotes essenciais
+      apt install -y git vim make python3-full net-tools cockpit
+    SHELL
+
+
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 2024
+      v.cpus = 2
+    end
+  end
+end
