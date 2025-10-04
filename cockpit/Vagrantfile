@@ -1,0 +1,35 @@
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# debian = cockpit + 1panel
+
+Vagrant.configure("2") do |config|
+  config.vm.define "debian" do |debian|
+    debian.vm.hostname = "debian"
+    debian.vm.box = "debian/bookworm64"
+    debian.vm.network "public_network", bridge: [
+      'Intel(R) Ethernet Connection (17) I219-LM',
+      'Hyper-V Virtual Ethernet Adapter',
+    ]
+
+
+    debian.vm.provision "shell", inline: <<-SHELL
+      # Evita prompts interativos
+      export DEBIAN_FRONTEND=noninteractive
+
+      # Atualiza e limpa pacotes
+      apt update
+
+      # Instala pacotes essenciais
+      apt install -y git vim make python3-full net-tools cockpit
+    SHELL
+
+
+    config.vm.provider "virtualbox" do |v|
+      v.name = "debian"
+      v.memory = 2024
+      v.cpus = 2
+    end
+  end
+end
